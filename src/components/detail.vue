@@ -2,7 +2,7 @@
 <div class="detail">
   <div class="lotto-title">
     <div class="title-shenzhou"></div>
-    <img src="../assets/s3.png" />
+    <img src="../assets/s3.png" @click="getRule"/>
   </div>
   <div class="lotto-container">
     <div class="lotto-draw">
@@ -41,34 +41,72 @@
         <div class="cover" v-show="coverNum !== 3"></div>
       </div>
     </div>
-    <div class="lotto-share">
+    <div class="lotto-share" @click="getShare">
       <div class="share-btn" ></div>
       <div class="share-text">首次分享额外获得一次抽奖机会</div>
     </div>
+    <div class="share-modal" v-show="shareShow" @click="closeShare">
+      <img src="../assets/s17.png" />
+    </div>
     <div class="lotto-award">
       <div class="award-item">
-        <div class="award-content">
-          <img src=""/>
+        <div class="award-content" 
+        v-for="(item,index) in awardiItems" 
+        :key="index" 
+        v-show="index == coverNum-1">
+          <div class="award-wraper" :class="{'first-award':coverNum == 1}">
+            <div class="award-list">
+              <img v-bind:src = 'awardiItems[index].imgSrc'>
+            </div>
+            <p>{{awardiItems[index].title}}</p>
+          </div>
+          <div class="award-wraper" v-show="coverNum !==1">
+            <div class="award-list">
+              <img v-bind:src = 'awardiItems[index].imgSrc'>
+            </div>
+            <p>{{awardiItems[index].title}}</p>
+          </div> 
         </div>
-        <div class="award-title"></div>
       </div>
     </div>
   </div>
-  <div class="lotto-banner">
-
+  <div class="lotto-banner" @click="getDetail">
+    <img src="../assets/s16.jpg" />
   </div>
-  <div class="lotto-rule">
+  <div class="lotto-rule" v-show="ruleShow">
+    <div class="rule-modal">
+      <div class="header-wrapper">
+          <img src="../assets/s19.png" />
+      </div>
+      <div class="modal-content" v-html="modalRule">
+        {{modalRule}}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <img src="../assets/s20.png" @click="ruleBtn"/>
+    </div> 
   </div>
-</div>
-  
+</div> 
 </template>
 <script>
+import {rules} from './rule'
 export default {
   name:'detail',
   data(){
     return{
-      drawNum:99,
+      drawNum:0,
       coverNum:100,
+      modalRule:rules,
+      ruleShow:false,
+      shareShow:false,
+      awardiItems:[
+        {title:'马蜂窝1000元旅行基金+神州租车1000元租车卡',imgSrc:require('../assets/s5.png')},
+        {title:'新人150元券',imgSrc:require('../assets/s7.png')},
+        {title:'新人150元券',imgSrc:require('../assets/s7.png')},
+        {title:'马蜂窝周边',imgSrc:require('../assets/s8.png')},
+        {title:'新人150元券',imgSrc:require('../assets/s7.png')},
+        {title:'专享租车券包',imgSrc:require('../assets/s6.png')},
+      ]
     }
   },
   methods:{
@@ -86,17 +124,38 @@ export default {
         clearInterval(test)
       }, Math.random()*10*500);
     },
-    
+    getRule(){
+      this.ruleShow = true;
+      // fixed定位后设置body的overflow属性为hidden，滑动上层的div时，底层的div不滚动。
+      // 动态添加css样式，获取body的dom节点，通过.style.具体属性 = “”的方式添加/修改body的属性
+      document.body.style.overflow ='hidden';
+    },
+    ruleBtn(){
+      this.ruleShow = false;
+      document.body.style.overflow = 'auto';
+    },
+    getShare(){
+      this.shareShow = true;
+      document.body.style.overflow = 'hidden';
+    },
+    closeShare(){
+      this.shareShow = false;
+      document.body.style.overflow = 'auto';
+    },
+    getDetail(){
+      this.$router.push('one')
+    }
   },
 }
 </script>
 <style scoped>
  .detail{
    width: 540px;
-   height: 1600px;
+   position: relative;
    margin:  0 auto;
    /* 再学习css中背景的缩写形式，确认contain的意思 */
-   background: url("../assets/s1.jpg") no-repeat 50%/contain;
+   background: url("../assets/s1.jpg") no-repeat ;
+   background-size:540px;
  }
  .lotto-title{
    width: 100%;
@@ -124,14 +183,15 @@ export default {
    margin-top: 60px;
    background: url('../assets/s4.png');
    background-size: 480px 974px;
+   position: relative;
  }
  .lotto-draw{
-   width: 410px;
+   width: 400px;
    height: 394px;
    margin: 0 auto;
    padding-top: 100px;
  }
- .prize-item{
+ .prize-item,.award-list{
    display: inline-block;
    width: 122px;
    height: 122px;
@@ -146,7 +206,7 @@ export default {
    position: relative; 
  }
  .prize-item:first-child{
-   width: 401px;
+   width: 386px;
    height: 122px;
  }
  .lotto-draw .prize-item:nth-child(3),.lotto-draw .prize-item:nth-child(6){
@@ -196,5 +256,123 @@ export default {
    margin: 0 auto;
    margin-bottom: 10px;
  }
-
+ .lotto-rule{
+   position: fixed;
+   background: rgba(0,0,0,.7);
+   left: 0px;
+   top: 0px;
+   z-index: 99;
+   width: 100%;
+   height: 100%;
+ }
+.rule-modal{
+  width: 430px;
+  height: 530px;
+  margin:0  auto;
+  margin-top: 60px;
+  background-color: #e6e6e6;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 20px;
+  padding: 20px 0;
+}
+.modal-header{
+  width: 100%;
+  height:40px;
+  position: relative;
+  margin: 20px;
+}
+.header-wrapper{
+  position: fixed;
+  left: 220px;
+  top: 80px;
+}
+.header-wrapper img{
+  width:195px;
+  height: 36px;
+}
+.modal-content{
+  height: 440px;
+  overflow: auto;
+  text-align: left;
+  margin:  0 auto;
+  margin-top: 50px;
+  padding: 0 24px;
+}
+/* 熟悉滚动条的样式修改 */
+/* 修改over-flow为auto中滚动条的样式 */
+/* 滚动条样式 */
+.modal-content::-webkit-scrollbar{
+  width: 3px;
+  border-radius: 15px;
+}
+/* 滚动条中滑动块的样式 */
+.modal-content::-webkit-scrollbar-thumb{
+  background-color: #f6c944;
+  border-radius: 15px;
+}
+/* 滚动条中轨道的样式 */
+.modal-content::-webkit-scrollbar-track{
+ background-color: #dadada;
+}
+.modal-footer img{
+  width: 46px;
+  height: 46px;
+  margin:  0 auto;
+  margin-top: 30px;
+}
+.share-modal{
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.7);
+  z-index: 999;
+}
+.share-modal img{
+  width: 319px;
+  height: 216px;
+  position: absolute;
+  right: 20px;
+}
+.lotto-banner{
+  margin: 0px auto;
+  padding: 30px 0px;
+}
+.lotto-banner img{
+  width: 480px;
+  height: 224px;
+  border-radius: 15px;
+}
+.lotto-award{
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+}
+.award-wraper{
+  display: inline-block;
+  font-size:18px;
+  font-weight: 600;
+}
+.award-content  .award-wraper:first-child{
+  margin-right: 20px;
+}
+.award-list{
+  margin-bottom: 4px;
+}
+.award-list img{
+  width:93px ;
+  height:74px ;
+  margin-top: 20px;
+}
+.first-award .award-list{
+  width: 388px;
+  height: 120px;
+}
+.first-award img{
+  width: 300px;
+  height: 70px;
+  margin-top: 24px;
+}
 </style>
