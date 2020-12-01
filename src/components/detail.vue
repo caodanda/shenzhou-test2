@@ -16,7 +16,7 @@
         <p>专享租车券包</p>
         <div class="cover" v-show="coverNum !== 6"></div>
       </div>
-      <div class="prize-item btn" @click="btnClick">
+      <div class="prize-item btn" @click="btnClick" >
         <img src="../assets/s9.png">
         <p>剩余 {{drawNum}} 次</p>
       </div>
@@ -108,8 +108,17 @@ export default {
         {title:'窝窝窝周边',imgSrc:require('../assets/s8.png')},
         {title:'新人150元券',imgSrc:require('../assets/s7.png')},
         {title:'专享租车券包',imgSrc:require('../assets/s6.png')},
-      ]
+      ],
+      status:false
     }
+  },
+  mounted(){
+    let last = localStorage.getItem('key')
+    if(last == null){
+      localStorage.setItem('key','5')
+      last = 5;
+    }
+    this.drawNum = Number(last) 
   },
   methods:{
     btnClick(){
@@ -119,10 +128,12 @@ export default {
           this.active =true;
         },0)
       }else{
-        this.drawNum --;
+        if(this.status == true){
+          this.drawNum --;
+          localStorage.setItem('key',this.drawNum)
+        }
         this.timer()
       }
-      
     },
     timer(){
       var test = setInterval(
@@ -134,7 +145,8 @@ export default {
           }
         },100);
       setTimeout(() => {
-        clearInterval(test)
+        clearInterval(test);
+        this.status = true;
       }, Math.random()*10*500);
     },
     getRule(){
@@ -308,8 +320,9 @@ export default {
 }
 .header-wrapper{
   position: fixed;
-  left: 220px;
+  left: 50%;
   top: 80px;
+  transform: translateX(-50%);
 }
 .header-wrapper img{
   width:195px;
