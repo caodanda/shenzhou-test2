@@ -95,7 +95,7 @@ export default {
   name:'detail',
   data(){
     return{
-      drawNum:5,
+      drawNum:0,
       coverNum:100,
       modalRule:rules,
       ruleShow:false,
@@ -108,8 +108,17 @@ export default {
         {title:'窝窝窝周边',imgSrc:require('../assets/s8.png')},
         {title:'新人150元券',imgSrc:require('../assets/s7.png')},
         {title:'专享租车券包',imgSrc:require('../assets/s6.png')},
-      ]
+      ],
+      status:false
     }
+  },
+  mounted(){
+    let last  = localStorage.getItem('key');
+    if(last == null){
+      last = 5 ;
+      localStorage.setItem('key','5')
+    }
+    this.drawNum = last
   },
   methods:{
     btnClick(){
@@ -119,12 +128,15 @@ export default {
           this.active =true;
         },0)
       }else{
+        if(this.status == true){
         this.drawNum --;
+        localStorage.setItem('key',this.drawNum)
+        }
         this.timer()
       }
-      
     },
     timer(){
+      this.status = false;
       var test = setInterval(
         ()=>{
           if(this.coverNum == 6){
@@ -134,7 +146,8 @@ export default {
           }
         },100);
       setTimeout(() => {
-        clearInterval(test)
+        this.status = true
+        clearInterval(test);
       }, Math.random()*10*500);
     },
     getRule(){
