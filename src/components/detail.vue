@@ -95,7 +95,7 @@ export default {
   name:'detail',
   data(){
     return{
-      drawNum:5,
+      drawNum:0,
       coverNum:100,
       modalRule:rules,
       ruleShow:false,
@@ -113,12 +113,21 @@ export default {
     }
   },
   mounted(){
+<<<<<<< HEAD
     let last = localStorage.getItem('key')
     if(last == null){
       localStorage.setItem('key','5')
       last = 5;
     }
     this.drawNum = Number(last) 
+=======
+    let last  = localStorage.getItem('key');
+    if(last == null){
+      last = 5 ;
+      localStorage.setItem('key','5')
+    }
+    this.drawNum = last
+>>>>>>> dev
   },
   methods:{
     btnClick(){
@@ -129,13 +138,19 @@ export default {
         },0)
       }else{
         if(this.status == true){
+<<<<<<< HEAD
           this.drawNum --;
           localStorage.setItem('key',this.drawNum)
+=======
+        this.drawNum --;
+        localStorage.setItem('key',this.drawNum)
+>>>>>>> dev
         }
         this.timer()
       }
     },
     timer(){
+      this.status = false;
       var test = setInterval(
         ()=>{
           if(this.coverNum == 6){
@@ -145,8 +160,13 @@ export default {
           }
         },100);
       setTimeout(() => {
+<<<<<<< HEAD
         clearInterval(test);
         this.status = true;
+=======
+        this.status = true
+        clearInterval(test);
+>>>>>>> dev
       }, Math.random()*10*500);
     },
     getRule(){
