@@ -8,7 +8,7 @@
     <div class="lotto-draw">
       <div class="prize-item">
         <img src="../assets/s5.png">
-        <p>马蜂窝1000元旅行基金+神州租车1000元租车卡</p>
+        <p>窝窝窝1000元旅行基金+神州租车1000元租车卡</p>
         <div class="cover" v-show="coverNum !== 1"></div>
       </div>
       <div class="prize-item">
@@ -32,7 +32,7 @@
       </div>
       <div class="prize-item">
         <img src="../assets/s8.png">
-        <p>马蜂窝周边</p>
+        <p>窝窝窝周边</p>
         <div class="cover" v-show="coverNum !== 4"></div>
       </div>
       <div class="prize-item">
@@ -41,9 +41,9 @@
         <div class="cover" v-show="coverNum !== 3"></div>
       </div>
     </div>
-    <div class="lotto-share" @click="getShare">
-      <div class="share-btn" ></div>
-      <div class="share-text">首次分享额外获得一次抽奖机会</div>
+    <div class="point-text" v-if="active">抽奖机会已经用完啦！</div>
+    <div class="lotto-share">
+      <div class="share-btn"  @click="getShare" ></div>
     </div>
     <div class="share-modal" v-show="shareShow" @click="closeShare">
       <img src="../assets/s17.png" />
@@ -89,21 +89,23 @@
 </div> 
 </template>
 <script>
+
 import {rules} from './rule'
 export default {
   name:'detail',
   data(){
     return{
-      drawNum:0,
+      drawNum:5,
       coverNum:100,
       modalRule:rules,
       ruleShow:false,
       shareShow:false,
+      active:false,
       awardiItems:[
-        {title:'马蜂窝1000元旅行基金+神州租车1000元租车卡',imgSrc:require('../assets/s5.png')},
+        {title:'窝窝窝1000元旅行基金+神州租车1000元租车卡',imgSrc:require('../assets/s5.png')},
         {title:'新人150元券',imgSrc:require('../assets/s7.png')},
         {title:'新人150元券',imgSrc:require('../assets/s7.png')},
-        {title:'马蜂窝周边',imgSrc:require('../assets/s8.png')},
+        {title:'窝窝窝周边',imgSrc:require('../assets/s8.png')},
         {title:'新人150元券',imgSrc:require('../assets/s7.png')},
         {title:'专享租车券包',imgSrc:require('../assets/s6.png')},
       ]
@@ -112,6 +114,17 @@ export default {
   methods:{
     btnClick(){
       this.coverNum =1;
+      if(this.drawNum < 1){
+        setTimeout(()=>{
+          this.active =true;
+        },0)
+      }else{
+        this.drawNum --;
+        this.timer()
+      }
+      
+    },
+    timer(){
       var test = setInterval(
         ()=>{
           if(this.coverNum == 6){
@@ -126,8 +139,6 @@ export default {
     },
     getRule(){
       this.ruleShow = true;
-      // fixed定位后设置body的overflow属性为hidden，滑动上层的div时，底层的div不滚动。
-      // 动态添加css样式，获取body的dom节点，通过.style.具体属性 = “”的方式添加/修改body的属性
       document.body.style.overflow ='hidden';
     },
     ruleBtn(){
@@ -153,7 +164,6 @@ export default {
    width: 540px;
    position: relative;
    margin:  0 auto;
-   /* 再学习css中背景的缩写形式，确认contain的意思 */
    background: url("../assets/s1.jpg") no-repeat ;
    background-size:540px;
  }
@@ -221,9 +231,23 @@ export default {
    height: 60px;
    margin-top: 12px;
  }
+ .point-text{
+   width: 400px;
+   height: 60px;
+   border-radius: 15px;
+   line-height: 60px;
+   color: #fff;
+   font-size: 28px;
+   font-weight: 500;
+   position:absolute;
+   left: 50%;
+   top: 28%;
+   transform: translateX(-50%);
+   z-index: 99;
+   background: #f8962b;
+ }
  .btn{
    background: #f9da5d;
-   /* 阴影需要再学习一下 */
    box-shadow: 0 8px 0 #f8962b;
  }
  .btn img{
@@ -299,19 +323,14 @@ export default {
   margin-top: 50px;
   padding: 0 24px;
 }
-/* 熟悉滚动条的样式修改 */
-/* 修改over-flow为auto中滚动条的样式 */
-/* 滚动条样式 */
 .modal-content::-webkit-scrollbar{
   width: 3px;
   border-radius: 15px;
 }
-/* 滚动条中滑动块的样式 */
 .modal-content::-webkit-scrollbar-thumb{
   background-color: #f6c944;
   border-radius: 15px;
 }
-/* 滚动条中轨道的样式 */
 .modal-content::-webkit-scrollbar-track{
  background-color: #dadada;
 }

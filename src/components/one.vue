@@ -1,6 +1,6 @@
 <template>
   <div class="one">
-    这是模拟路由配置界面！
+    这是模拟界面！
   </div>
 </template>
 
