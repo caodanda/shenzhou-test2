@@ -89,14 +89,13 @@
 </div> 
 </template>
 <script>
-
 import {rules} from './rule'
 export default {
   name:'detail',
   data(){
     return{
       drawNum:0,
-      coverNum:100,
+      coverNum:0,
       modalRule:rules,
       ruleShow:false,
       shareShow:false,
@@ -109,7 +108,10 @@ export default {
         {title:'新人150元券',imgSrc:require('../assets/s7.png')},
         {title:'专享租车券包',imgSrc:require('../assets/s6.png')},
       ],
-      status:false
+      buttonStatus:true,
+      speed:0,
+      timer:null,
+      proId:null
     }
   },
   mounted(){
@@ -121,34 +123,46 @@ export default {
     this.drawNum = Number(last) 
   },
   methods:{
-    btnClick(){
-      this.coverNum =1;
-      if(this.drawNum < 1){
-        setTimeout(()=>{
-          this.active =true;
-        },0)
-      }else{
-        if(this.status == true){
-          this.drawNum --;
-          localStorage.setItem('key',this.drawNum)
-        }
-        this.timer()
+    //  转盘转动的函数
+    drawRotate(){
+      this.buttonStatus = false
+      if(this.coverNum > 6){
+        this.coverNum = 1
+      }
+      this.timer = setTimeout(()=>{
+        this.coverNum++;
+        this.drawRotate()
+        this.speed += 20
+      },this.speed)
+      this.random(1,7)
+      if(this.speed >= 300 && this.coverNum == this.proId){
+        this.stopDraw()
       }
     },
-    timer(){
-      this.status = false;
-      var test = setInterval(
-        ()=>{
-          if(this.coverNum == 6){
-            this.coverNum =1
-          }else{
-            this.coverNum++;
-          }
-        },100);
-      setTimeout(() => {
-        clearInterval(test);
-        this.status = true;
-      }, Math.random()*10*500);
+    // 转盘停止的函数
+    stopDraw(){
+      clearTimeout(this.timer)
+      this.speed = 0
+      this.buttonStatus = true
+    },
+    // 随机生成的商品id
+    random(min,max){
+     this.proId = Math.floor((Math.random()*(max-min))+min)
+    },
+    // 点击事件
+    btnClick(){
+      if(this.buttonStatus == false){
+        return
+      }
+      if(this.drawNum <1 ){
+        this.active = true
+        return
+      }else{
+        this.coverNum = 0
+        this.drawNum --;
+        localStorage.setItem('key',this.drawNum);
+        this.drawRotate()
+      }
     },
     getRule(){
       this.ruleShow = true;
@@ -213,6 +227,8 @@ export default {
    height: 394px;
    margin: 0 auto;
    padding-top: 100px;
+   display:flex;
+   flex-wrap: wrap;
  }
  .prize-item,.award-list{
    display: inline-block;
